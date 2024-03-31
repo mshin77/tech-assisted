@@ -1,5 +1,5 @@
 ---
-title: "Effects of technology-assisted instruction with teacher-guided math talks on fraction multiplication word problems for students with learning disabilities"
+title: "Effects of technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities"
 date: "`r Sys.Date()`"
 output:
   html_document:

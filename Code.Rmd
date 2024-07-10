@@ -11,13 +11,12 @@ output:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  cache = TRUE,
   message = FALSE, 
   warning = FALSE)
 ```
 
-This website contains data and R code used for the data processing and analysis in Authors (2024). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://osf.io/f9832/?view_only=dca7a2ba18ee48f7834af2539c982d20).
 
+This website contains data and R code used for the data processing and analysis in Authors (2024). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://osf.io/f9832/?view_only=dca7a2ba18ee48f7834af2539c982d20).
 
 # Dataset {.tabset}
 
@@ -26,18 +25,18 @@ suppressPackageStartupMessages({
   library(knitr)
   library(kableExtra)
   library(readxl)
+  library(officer)
+  library(flextable)
   library(DT)
   library(tidyr)
   library(dplyr)
+  library(stringr)
   library(downloadthis)
   library(ggh4x)
   library(broom)
   library(gridExtra)
   library(SingleCaseES)
-  library(nlme)
-  library(clubSandwich)
-  library(lmeInfo)
-  library(msm)
+  library(brms)
   library(ggplot2)
 })
 
@@ -54,7 +53,7 @@ web_based_data_kb <- web_based_data %>%
 
 web_based_data %>%
   download_this(
-    output_name = "Authors (2023) Dataset, Outcomes by Question Types",
+    output_name = "Authors (2023) Dataset, sums by Question Types",
     output_extension = ".xlsx",
     button_label = "Download",
     button_type = "default",
@@ -88,17 +87,17 @@ ticks <- function(n) {function(limits) pretty(limits, n)}
 
 web_based_data <- web_based_data %>%
   group_by(case, date) %>%
-  mutate(average_outcome = round(mean(outcome),0)) 
+  mutate(average_sum = round(mean(sum),0)) 
 
 web_based_data_baseline <- web_based_data %>%
   filter(phase== "Baseline") %>%
   group_by(case) %>%
-  mutate(median = median(average_outcome)) %>%
+  mutate(median = median(average_sum)) %>%
   mutate(upper_threshold = round(median + 0.25 * median, digits = 2)) %>%
   mutate(lower_threshold = round(median - 0.25 * median, digits = 2))
 
-average_outcome_baseline.plot <- web_based_data %>%
-  ggplot(aes(x = date, y = average_outcome, group = phase)) +
+average_sum_baseline.plot <- web_based_data %>%
+  ggplot(aes(x = date, y = average_sum, group = phase)) +
   facet_wrap2(case ~ ., ncol = 1, axes = "all", remove_labels = "all") +
   geom_line(data = web_based_data %>% filter(phase %in% c("Baseline", "Intervention", "Maintenance")),
             aes(group = paste(phase, question_type)),
@@ -143,20 +142,20 @@ average_outcome_baseline.plot <- web_based_data %>%
   geom_vline(data = intervention_v, aes(xintercept = intervention_v$max_B_date + 0.5),
              linetype = "longdash", linewidth = 0.5, color = "#4c4c4c") 
 
-average_outcome_baseline.plot
+average_sum_baseline.plot
 ```
 
 ## Student Performance
 
 ```{r, fig.width = 8, fig.height = 7.5}
 web_based_data$question_type <- web_based_data$question_type %>% as.factor() 
-question_names <- c("Problem-Solving", "Visualization") 
-names(question_names) <- c("solving", "visual")
-web_based_data$question_type <- as.factor(question_names[web_based_data$question_type])
-web_based_data$question_type <- relevel(web_based_data$question_type, "Visualization")
+# question_names <- c("Problem-Solving", "Visualization") 
+# names(question_names) <- c("solving", "visual")
+# web_based_data$question_type <- as.factor(question_names[web_based_data$question_type])
+web_based_data$question_type <- relevel(web_based_data$question_type, "visualization")
 
-outcome.plot <- web_based_data %>%
-  ggplot(aes(x = date, y = outcome, color = as.factor(question_type), group = question_type)) +
+sum.plot <- web_based_data %>%
+  ggplot(aes(x = date, y = sum, color = as.factor(question_type), group = question_type)) +
   facet_wrap2(case ~ ., ncol = 1, axes = "all", remove_labels = "all") +
   geom_line(data = web_based_data %>% filter(phase %in% c("Baseline", "Intervention", "Maintenance")),
             aes(group = paste(phase, question_type)),
@@ -197,7 +196,7 @@ outcome.plot <- web_based_data %>%
   geom_vline(data = intervention_v, aes(xintercept = intervention_v$max_B_date + 0.5),
              linetype = "longdash", linewidth = 0.5, color = "#4c4c4c") 
 
-outcome.plot 
+sum.plot 
 ```
 
 <br>
@@ -209,7 +208,7 @@ outcome.plot
 ```{r}
 lm_desc <- web_based_data %>%
   group_by(case, phase, question_type) %>%
-  do(tidy(lm(outcome ~ day, data = .))) %>%
+  do(tidy(lm(sum ~ day, data = .))) %>%
   filter(term == "day") %>% 
   mutate_if(is.numeric, ~round(., 2)) %>%
   select(case, phase, question_type, estimate, std.error)
@@ -217,18 +216,18 @@ lm_desc <- web_based_data %>%
 lm_desc$trend <- lm_desc$estimate
 lm_desc$SE <- lm_desc$std.error
 
-outcome_desc <- web_based_data %>%
+sum_desc <- web_based_data %>%
   group_by(case, phase, question_type) %>%
-  summarise(min = min(outcome), 
-            max = max(outcome), 
-            level = mean(outcome),
-            median = median(outcome),
-            SD = sd(outcome),
+  summarise(min = min(sum), 
+            max = max(sum), 
+            level = mean(sum),
+            median = median(sum),
+            SD = sd(sum),
             range = paste(min, "-", max)) %>% 
   mutate_if(is.numeric, ~round(., 2)) %>%
   select(everything(), -min, -max)
 
-within_td <- list(outcome_desc, lm_desc) %>% purrr::reduce(left_join) 
+within_td <- list(sum_desc, lm_desc) %>% purrr::reduce(left_join) 
 
 within_td$SD <- paste0("(", within_td $SD, ")")
 within_td$level <- paste(within_td $level, within_td $SD)
@@ -238,15 +237,25 @@ within_td $SE <- paste0("(", within_td $SE, ")")
 within_td $trend <- paste(within_td $trend, within_td $SE)
 colnames(within_td )[colnames(within_td ) == "trend"] <- "trend (SE)"
 
-within_td  %>% 
+within_phase <- within_td  %>% 
   select(case, phase, question_type, "level (SD)", "trend (SE)", range) %>%
-  kbl(align = "c") %>%
-  kable_styling(
-    bootstrap_options = c("striped","hover","condensed"),
-    full_width = T,
-    font_size = 12,
-    fixed_thead = T) %>%
-  scroll_box(height = "350px")
+  flextable() %>%
+  merge_v(j = ~ case) %>%
+  merge_v(j = ~ question_type) %>%
+  merge_v(j = ~ phase) %>%
+  theme_vanilla() %>%
+  autofit() 
+
+within_phase
+
+doc <- read_docx()
+
+doc <- doc %>%
+  body_add_par("Within-Phase", style = "heading 1")
+
+doc <- doc %>%
+  body_add_flextable(within_phase)
+print(doc, target = "data/within_phase.docx")
 ```
 
 <br>
@@ -256,10 +265,10 @@ within_td  %>%
 #### **Baseline vs Intervention** 
 
 ```{r}
-outcome_AB <- batch_calc_ES(dat = web_based_data,
+sum_AB <- batch_calc_ES(dat = web_based_data,
                             grouping = c(case, question_type),
                             condition = phase,
-                            outcome = outcome,
+                            outcome = sum,
                             session_number = day,
                             baseline_phase = "Baseline",
                             intervention_phase = "Intervention",
@@ -267,23 +276,31 @@ outcome_AB <- batch_calc_ES(dat = web_based_data,
                             improvement = "increase",
                             format = "wide") %>%
   mutate_if(is.numeric, ~round(., 2)) %>%
-  kbl(align = "c") %>%
-  kable_styling(
-    bootstrap_options = c("striped","hover","condensed"),
-    full_width = T,
-    font_size = 12,
-    fixed_thead = T) 
+  flextable() %>%
+  merge_v(j = ~ case) %>%
+  merge_v(j = ~ question_type) %>%
+  theme_vanilla() %>%
+  autofit()
 
-outcome_AB
+sum_AB
+
+doc <- read_docx()
+
+doc <- doc %>%
+  body_add_par("Between-Phase AB", style = "heading 1")
+
+doc <- doc %>%
+  body_add_flextable(sum_AB)
+print(doc, target = "data/sum_AB.docx")
 ```
 
 #### **Intervention vs Maintenance** 
 
 ```{r}
-outcome_BM <- batch_calc_ES(dat = web_based_data,
+sum_BM <- batch_calc_ES(dat = web_based_data,
                             grouping = c(case, question_type),
                             condition = phase,
-                            outcome = outcome,
+                            outcome = sum,
                             session_number = day,
                             baseline_phase = "Intervention",
                             intervention_phase = "Maintenance",
@@ -291,19 +308,122 @@ outcome_BM <- batch_calc_ES(dat = web_based_data,
                             improvement = "increase",
                             format = "wide") %>%
   mutate_if(is.numeric, ~round(., 2)) %>%
-  kbl(align = "c") %>%
-  kable_styling(
-    bootstrap_options = c("striped","hover","condensed"),
-    full_width = T,
-    font_size = 12,
-    fixed_thead = T) 
+  flextable() %>%
+  merge_v(j = ~ case) %>%
+  merge_v(j = ~ question_type) %>%
+  theme_vanilla() %>%
+  autofit()
 
-outcome_BM
+sum_BM
+
+doc <- read_docx()
+
+doc <- doc %>%
+  body_add_par("Between-Phase BM", style = "heading 1")
+
+doc <- doc %>%
+  body_add_flextable(sum_BM)
+print(doc, target = "data/sum_BM.docx")
+```
+
+
+# Bayesian CLMMs {.tabset}
+
+#### **Cumulative Link Mixed Effects Models**
+
+```{r, echo=FALSE}
+load("data/tech_assisted_data.RData")
+```
+
+```{r, eval=FALSE}
+# Data Preparation
+
+long_data <- web_based_data %>%
+  pivot_longer(
+    cols = starts_with("item"), 
+    names_to = "item_type",     
+    values_to = "score"        
+  ) %>% 
+  mutate(item_type = str_remove(item_type, "^item_")) 
+
+score_levels <- c("0", "1", "2", "3", "4", "5")
+
+long_data <- long_data %>% 
+  select(date, case, day, phase, question_type, visualization, solving, item_type, score, -sum, A:trend_BM) %>%
+  mutate(score = factor(score, levels = score_levels, ordered = TRUE)) %>%
+  mutate(item = paste(item_type, "_", day))
+
+openxlsx::write.xlsx(long_data, "data/long_data.xlsx", rowNames = FALSE)
+
+# Checking Parameter Names in Priors
+
+get_prior(
+  formula = score ~ time_A + level_AB + trend_AB + level_BM + trend_BM + 
+    solving + time_A:solving + level_AB:solving + 
+    trend_AB:solving + level_BM:solving + trend_BM:solving + 
+    (time_A + level_AB + trend_AB + level_BM + trend_BM + 
+    solving + time_A:solving + level_AB:solving + 
+    trend_AB:solving + level_BM:solving + trend_BM:solving |case/day/item),
+  data = long_data,
+  family = cumulative("logit")
+)
+
+# Model Fitting
+
+Model <- brm( 
+    formula = score ~ time_A + level_AB + trend_AB + level_BM + trend_BM + 
+    solving + time_A:solving + level_AB:solving + 
+    trend_AB:solving + level_BM:solving + trend_BM:solving + (level_AB|case/day/item),
+  data = long_data,
+  family = cumulative("logit"),
+  prior = c(  
+    prior(student_t(3, 0, 2.5), class = Intercept),  # Prior for the intercepts (thresholds)
+    prior(normal(0, 2.5), class = b),                # Prior for all regression coefficients
+    prior(student_t(3, 0, 2.5), class = sd)          # Prior for the standard deviations
+  ),
+  iter = 3000, 
+  warmup = 1000, 
+  chains = 4, 
+  seed = 2024,
+  control = list(adapt_delta = 0.95)
+)
+
+# Prior Summaries
+
+prior_summary(Model)
+```
+
+#### **Outputs in Logit**
+
+```{r}
+print(Model)
+```
+
+#### **Odd Ratios and Credible Intervals**
+
+```{r}
+exp(fixef(Model)[,-2]) %>% round(3)
+```
+
+#### **Posterior Density Plots and Trace Plots**
+
+```{r, fig.width = 10, fig.height = 7}
+plot(Model)
+```
+
+```{r, fig.width = 10, fig.height = 7}
+mcmc_plot(Model, type = "trace")
+```
+
+#### *Posterior Predictive Check*
+
+```{r, fig.width = 10, fig.height = 5}
+pp_check(Model)
 ```
 
 # Supplemental Materials {.tabset}
 
-#### **Table S1. Rubric to Evaluate Students’ Mathematical Performances**
+#### **Table S1. Rubric for Fraction Multiplication Word Problems**
 
 ```{r}
 tableS1 <- read.csv("data/tableS1.csv")
@@ -319,4 +439,3 @@ rubric <- kable(tableS1, align = "lccc",
 ```{r, echo = FALSE}
 rubric
 ```
-

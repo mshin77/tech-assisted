@@ -1,5 +1,5 @@
 ---
-title: "Technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities: Visual analysis and Bayesian models"
+title: "Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling"
 date: "`r Sys.Date()`"
 output:
   html_document:

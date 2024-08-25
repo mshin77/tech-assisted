@@ -1,1 +1,1 @@
-Authors. (2024). Technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities: Visual analysis and Bayesian models. https://tech-assisted.netlify.app.
+Authors. (2024). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. https://tech-assisted.netlify.app.

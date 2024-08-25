@@ -1,5 +1,5 @@
 ---
-title: "Effects of technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities"
+title: "Technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities: Visual analysis and Bayesian models"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -72,7 +72,7 @@ web_based_data_kb
 
 ## Baseline Stability 
 
-```{r, fig.width = 8, fig.height = 7.5}
+```{r, fig.width = 6.5, fig.height = 7.5}
 baseline_v <- read.csv("data/baseline_v.csv")
 intervention_v <- read.csv("data/intervention_v.csv")
 
@@ -127,7 +127,7 @@ average_sum_baseline.plot <- web_based_data %>%
   ) +
   labs(
     x = "Date",
-    y = "Average Percentage Correct",
+    y = "Average Correct Score",
     title = ""
   ) +
   guides(shape="none") +
@@ -147,7 +147,7 @@ average_sum_baseline.plot
 
 ## Student Performance
 
-```{r, fig.width = 8, fig.height = 7.5}
+```{r, fig.width = 6.5, fig.height = 7.5}
 web_based_data$question_type <- web_based_data$question_type %>% as.factor() 
 # question_names <- c("Problem-Solving", "Visualization") 
 # names(question_names) <- c("solving", "visual")
@@ -186,7 +186,7 @@ sum.plot <- web_based_data %>%
   ) +
   labs(
     x = "Date",
-    y = "Percentage Correct",
+    y = "Correct Score",
     title = ""
   ) +
   guides(shape="none") +

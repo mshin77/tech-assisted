@@ -1,1 +1,1 @@
-Authors. (2024). Effects of technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities. https://tech-assisted.netlify.app.
+Authors. (2024). Technology-assisted instruction with teacher prompts on fraction multiplication word problems for students with learning disabilities: Visual analysis and Bayesian models. https://tech-assisted.netlify.app.

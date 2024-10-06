@@ -16,7 +16,9 @@ knitr::opts_chunk$set(
 ```
 
 
-This website contains data and R code used for the data processing and analysis in Authors (2024). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://osf.io/f9832/?view_only=dca7a2ba18ee48f7834af2539c982d20).
+This website contains data and R code used for the data processing and analysis in Shin and Park (in press). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://doi.org/10.17605/OSF.IO/F9832).
+
+Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. https://mshin77.github.io/tech-assisted
 
 # Dataset {.tabset}
 

@@ -331,7 +331,9 @@ print(doc, target = "data/sum_BM.docx")
 
 # Bayesian CLMMs {.tabset}
 
-#### **Cumulative Link Mixed Effects Models**
+## Code 
+
+#### **Cumulative Link Mixed Effects Models** #### 
 
 ```{r, echo=FALSE}
 load("data/tech_assisted_data.RData")
@@ -390,22 +392,25 @@ Model <- brm(
   control = list(adapt_delta = 0.95)
 )
 
-# Prior Summaries
-
-prior_summary(Model)
+# prior_summary(Model)
 ```
 
-#### **Outputs in Logit**
+## Results
+
+#### **Fixed Coefficients in Logit**
 
 ```{r}
-print(Model)
+fixed_coefficient <- fixef(Model)
+
+fixed_coefficient[1:5, 1] <- fixed_coefficient[1:5, 1] * -1
+
+rownames(fixed_coefficient)[1:5] <- c("intercept (Y>0)", "intercept (Y>1)", "intercept (Y>2)", "intercept (Y>3)", "intercept (Y>4)")
+
+fixed_coefficient %>% data.frame() %>% mutate(odd_ratio = exp(Estimate)) %>% 
+  mutate_if(is.numeric, ~ round(., 2))
 ```
 
-#### **Odd Ratios and Credible Intervals**
-
-```{r}
-exp(fixef(Model)[,-2]) %>% round(3)
-```
+## Plots
 
 #### **Posterior Density Plots and Trace Plots**
 

@@ -1,28 +1,26 @@
 ---
 title: "Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling"
 date: "`r Sys.Date()`"
-output:
-  html_document:
-     toc: true
-     toc_float: true
-     code_folding: hide
-     self_contained: false
+format:
+  html:
+    code-fold: true
+    code-tools: true
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  message = FALSE, 
-  warning = FALSE)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, error = FALSE, message = FALSE)
 ```
 
+This [website](https://mshin77.github.io/tech-assisted) contains data and R code used for the data processing and analysis in Shin and Park (in press). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://doi.org/10.17605/OSF.IO/F9832).
 
-This website contains data and R code used for the data processing and analysis in Shin and Park (in press). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://doi.org/10.17605/OSF.IO/F9832).
+Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. 
 
-Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. https://mshin77.github.io/tech-assisted
+::: panel-tabset
 
-# Dataset {.tabset}
+## Dataset 
 
 ```{r}
+#| code-fold: false
 suppressPackageStartupMessages({
   library(knitr)
   library(kableExtra)
@@ -43,7 +41,9 @@ suppressPackageStartupMessages({
 })
 
 web_based_data <- read.csv("data/web_based_data.csv")
+```
 
+```{r, echo = FALSE}
 web_based_data_kb <- web_based_data %>%
   kbl(align = "c") %>%
   kable_styling(
@@ -64,15 +64,13 @@ web_based_data %>%
     class = "buttom_small")
 ```
 
-
 ```{r, echo = FALSE}
 web_based_data_kb
 ```
 
+## Graphing 
 
-# Graphing {.tabset}
-
-## Baseline Stability 
+#### Baseline Stability 
 
 ```{r, fig.width = 6.5, fig.height = 7.5}
 baseline_v <- read.csv("data/baseline_v.csv")
@@ -147,7 +145,7 @@ average_sum_baseline.plot <- web_based_data %>%
 average_sum_baseline.plot
 ```
 
-## Student Performance
+#### Student Performance (Figure 2)
 
 ```{r, fig.width = 6.5, fig.height = 7.5}
 web_based_data$question_type <- web_based_data$question_type %>% as.factor() 
@@ -201,11 +199,9 @@ sum.plot <- web_based_data %>%
 sum.plot 
 ```
 
-<br>
+## Visual Analysis 
 
-# Visual Analysis {.tabset}
-
-## Within-Phase Patterns
+#### Within-Phase Patterns (Table 2)
 
 ```{r}
 lm_desc <- web_based_data %>%
@@ -260,11 +256,9 @@ doc <- doc %>%
 print(doc, target = "data/within_phase.docx")
 ```
 
-<br>
+#### Between-Phase Patterns (Table 2)
 
-## Between-Phase Patterns 
-
-#### **Baseline vs Intervention** 
+##### `Baseline vs Intervention`
 
 ```{r}
 sum_AB <- batch_calc_ES(dat = web_based_data,
@@ -296,7 +290,7 @@ doc <- doc %>%
 print(doc, target = "data/sum_AB.docx")
 ```
 
-#### **Intervention vs Maintenance** 
+##### `Intervention vs Maintenance` 
 
 ```{r}
 sum_BM <- batch_calc_ES(dat = web_based_data,
@@ -329,17 +323,17 @@ print(doc, target = "data/sum_BM.docx")
 ```
 
 
-# Bayesian CLMMs {.tabset}
+## Bayesian CLMMs 
 
-## Code 
-
-#### **Cumulative Link Mixed Effects Models** #### 
+#### Code (Cumulative Link Mixed Effects Models)
 
 ```{r, echo=FALSE}
 load("data/tech_assisted_data.RData")
 ```
 
 ```{r, eval=FALSE}
+#| code-fold: false
+
 # Data Preparation
 
 long_data <- web_based_data %>%
@@ -395,9 +389,9 @@ Model <- brm(
 # prior_summary(Model)
 ```
 
-## Results
+## Results 
 
-#### **Fixed Coefficients in Logit**
+#### Fixed Coefficients in Logit (Table 3)
 
 ```{r}
 fixed_coefficient <- fixef(Model)
@@ -412,7 +406,13 @@ fixed_coefficient %>% data.frame() %>% mutate(odd_ratio = exp(Estimate)) %>%
 
 ## Plots
 
-#### **Posterior Density Plots and Trace Plots**
+#### Posterior Predictive Check
+
+```{r, fig.width = 10, fig.height = 5}
+pp_check(Model)
+```
+
+#### Posterior Density Plots and Trace Plots
 
 ```{r, fig.width = 10, fig.height = 7}
 plot(Model)
@@ -422,15 +422,9 @@ plot(Model)
 mcmc_plot(Model, type = "trace")
 ```
 
-#### *Posterior Predictive Check*
+## Rubric 
 
-```{r, fig.width = 10, fig.height = 5}
-pp_check(Model)
-```
-
-# Supplemental Materials {.tabset}
-
-#### **Table S1. Rubric for Fraction Multiplication Word Problems**
+#### Rubric for Fraction Multiplication Word Problems (Table S1)
 
 ```{r}
 tableS1 <- read.csv("data/tableS1.csv")
@@ -446,3 +440,5 @@ rubric <- kable(tableS1, align = "lccc",
 ```{r, echo = FALSE}
 rubric
 ```
+
+:::

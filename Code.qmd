@@ -245,7 +245,10 @@ within_phase <- within_td  %>%
   autofit() 
 
 within_phase
+```
 
+
+```{r, echo = FALSE, eval=FALSE}
 doc <- read_docx()
 
 doc <- doc %>%
@@ -279,7 +282,10 @@ sum_AB <- batch_calc_ES(dat = web_based_data,
   autofit()
 
 sum_AB
+```
 
+
+```{r, echo = FALSE, eval=FALSE}
 doc <- read_docx()
 
 doc <- doc %>%
@@ -311,7 +317,10 @@ sum_BM <- batch_calc_ES(dat = web_based_data,
   autofit()
 
 sum_BM
+```
 
+
+```{r, echo = FALSE, eval=FALSE}
 doc <- read_docx()
 
 doc <- doc %>%
@@ -351,7 +360,7 @@ long_data <- long_data %>%
   mutate(score = factor(score, levels = score_levels, ordered = TRUE)) %>%
   mutate(item = paste(item_type, "_", day))
 
-openxlsx::write.xlsx(long_data, "data/long_data.xlsx", rowNames = FALSE)
+# openxlsx::write.xlsx(long_data, "data/long_data.xlsx", rowNames = FALSE)
 
 # Checking Parameter Names in Priors
 

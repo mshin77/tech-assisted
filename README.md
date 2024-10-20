@@ -1,1 +1,1 @@
-Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. https://mshin77.github.io/tech-assisted
+Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. 

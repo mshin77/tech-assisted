@@ -1,23 +1,25 @@
 ---
 title: "Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling"
 date: "`r Sys.Date()`"
-format:
-  html:
-    code-fold: true
-    code-tools: true
+output:
+  html_document:
+     toc: true
+     toc_float: true
+     code_folding: hide
+     self_contained: false
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE, error = FALSE, message = FALSE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE)
 ```
 
 This [website](https://mshin77.github.io/tech-assisted) contains data and R code used for the data processing and analysis in Shin and Park (in press). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://doi.org/10.17605/OSF.IO/F9832).
 
 Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. 
 
-::: panel-tabset
-
-## Dataset 
+# Dataset {.tabset}
 
 ```{r}
 #| code-fold: false
@@ -68,7 +70,7 @@ web_based_data %>%
 web_based_data_kb
 ```
 
-## Graphing 
+# Graphing {.tabset}
 
 #### Baseline Stability 
 
@@ -199,7 +201,7 @@ sum.plot <- web_based_data %>%
 sum.plot 
 ```
 
-## Visual Analysis 
+# Visual Analysis {.tabset}
 
 #### Within-Phase Patterns (Table 2)
 
@@ -332,7 +334,7 @@ print(doc, target = "data/sum_BM.docx")
 ```
 
 
-## Bayesian CLMMs 
+# Bayesian CLMMs {.tabset}
 
 #### Code (Cumulative Link Mixed Effects Models)
 
@@ -398,7 +400,7 @@ Model <- brm(
 # prior_summary(Model)
 ```
 
-## Results 
+# Results {.tabset}
 
 #### Fixed Coefficients in Logit (Table 3)
 
@@ -413,7 +415,7 @@ fixed_coefficient %>% data.frame() %>% mutate(odd_ratio = exp(Estimate)) %>%
   mutate_if(is.numeric, ~ round(., 2))
 ```
 
-## Plots
+# Plots {.tabset}
 
 #### Posterior Predictive Check
 
@@ -431,7 +433,7 @@ plot(Model)
 mcmc_plot(Model, type = "trace")
 ```
 
-## Rubric 
+# Rubric {.tabset}
 
 #### Rubric for Fraction Multiplication Word Problems (Table S1)
 
@@ -450,4 +452,3 @@ rubric <- kable(tableS1, align = "lccc",
 rubric
 ```
 
-:::

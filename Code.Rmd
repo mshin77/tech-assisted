@@ -15,9 +15,9 @@ knitr::opts_chunk$set(
   warning = FALSE)
 ```
 
-This [website](https://mshin77.github.io/tech-assisted) contains data and R code used for the data processing and analysis in Shin and Park (in press). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://doi.org/10.17605/OSF.IO/F9832).
+This [website](https://mshin77.github.io/tech-assisted) contains data and R code used for the data processing and analysis in Shin and Park (2024). The scripts have been posted on an online data repository, accessible at the [Center for Open Science](https://doi.org/10.17605/OSF.IO/F9832) and [GitHub](https://github.com/mshin77/tech-assisted).
 
-Shin, M., & Park, J. (in press). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. 
+Shin, M., & Park, J. (2024). Technology-assisted instruction with teacher prompts on fraction multiplication word problems: A single-case design with visual analysis and Bayesian multilevel modeling. *Assistive Technology*. https://doi.org/10.1080/10400435.2024.2415366
 
 # Dataset {.tabset}
 
